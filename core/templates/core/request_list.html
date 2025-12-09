@@ -1,0 +1,12 @@
+<h1>参加リクエスト一覧</h1>
+
+{% for r in requests %}
+    <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
+        <p>ユーザー：{{ r.user.username }}</p>
+        <p>ルーム：{{ r.room.name }}</p>
+
+        <a href="{% url 'approve_request' r.id %}">承認する</a>
+    </div>
+{% empty %}
+    <p>承認待ちのリクエストはありません。</p>
+{% endfor %}

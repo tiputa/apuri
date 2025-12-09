@@ -1,0 +1,15 @@
+<h1>公開ルーム一覧</h1>
+
+{% for room in rooms %}
+    <div style="border:1px solid #ccc; margin-bottom:15px; padding:10px;">
+        <h2>{{ room.name }}</h2>
+        <p>{{ room.description }}</p>
+        <small>作成者：{{ room.host.username }}</small>
+        <br>
+        <a href="#">このルームに参加リクエストを送る</a>
+    </div>
+{% empty %}
+    <p>まだルームがありません。</p>
+{% endfor %}
+
+<a href="{% url 'home' %}">ホームに戻る</a>

@@ -1,0 +1,10 @@
+<h1>ルーム作成</h1>
+
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <button type="submit">作成</button>
+</form>
+
+<a href="{% url 'home' %}">戻る</a>

@@ -1,0 +1,30 @@
+<a href="{% url 'create_post' %}">新規投稿</a>
+<a href="{% url 'create_room' %}">＋ ルームを作成</a>
+<a href="{% url 'room_list' %}">公開ルーム一覧を見る</a>
+<a href="{% url 'request_list' %}">参加リクエストを見る（ホスト用）</a>
+<a href="{% url 'dm_list' %}">DMを見る</a>
+
+<h1>SNSトップページ</h1>
+
+{% for p in posts %}
+<div style="border:1px solid #aaa; padding:10px; margin-bottom:10px;">
+    <p>{{ p.text }}</p>
+    <small>{{ p.created_at }}</small>
+</div>
+{% empty %}
+<p>まだ投稿がありません。</p>
+{% endfor %}
+
+
+{% if user.is_authenticated %}
+    <p>{{ user.username }} でログイン中</p>
+
+    <form action="{% url 'logout' %}" method="post">
+        {% csrf_token %}
+        <button type="submit">ログアウト</button>
+    </form>
+
+{% else %}
+    <a href="{% url 'login' %}">ログイン</a>
+    <a href="{% url 'signup' %}">新規登録</a>
+{% endif %}

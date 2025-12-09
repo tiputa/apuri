@@ -1,0 +1,20 @@
+<h1>{{ other_user.username }} さんとのDM</h1>
+
+<div style="max-height:400px; overflow-y:scroll; border:1px solid #ccc; padding:10px;">
+    {% for m in messages %}
+        <p>
+            <strong>{{ m.sender.username }}</strong>: {{ m.text }}<br>
+            <small>{{ m.created_at }}</small>
+        </p>
+        <hr>
+    {% endfor %}
+</div>
+
+<h3>メッセージを送る</h3>
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">送信</button>
+</form>
+
+<a href="{% url 'dm_list' %}">← DM一覧に戻る</a>
