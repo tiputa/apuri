@@ -1,24 +1,117 @@
-<h1>{{ room.name }}</h1>
-<p>{{ room.description }}</p>
+{% extends "core/base.html" %}
+{% load static %}
 
-<hr>
+{% block content %}
 
-<h2>メッセージ</h2>
+<h2 style="margin-bottom:5px; text-align:center;">
+    {{ room.name }}
+</h2>
 
-<div style="max-height: 400px; overflow-y: scroll; border:1px solid #ccc; padding:10px;">
-    {% for m in messages %}
-        <p><strong>{{ m.user.username }}</strong>: {{ m.text }}<br>
-        <small>{{ m.created_at }}</small></p>
-        <hr>
+{% if is_host %}
+<p style="color:gray; margin-bottom:15px; text-align:center;">
+    あなたはこのルームの作成者です
+</p>
+{% endif %}
+
+<!-- =====================
+     チャット表示エリア
+     ===================== -->
+<div style="
+    border:1px solid #ddd;
+    padding:12px;
+    height:360px;
+    overflow-y:auto;
+    background:#f9f9f9;
+    margin-bottom:12px;
+    border-radius:14px;
+">
+
+    {% for msg in messages %}
+    <div style="
+        display:flex;
+        align-items:flex-start;
+        margin-bottom:12px;
+        {% if msg.user == request.user %}
+            flex-direction:row-reverse;
+            text-align:right;
+        {% endif %}
+    ">
+
+        <!-- ===== アイコン ===== -->
+        <img
+            src="{% if msg.user.profile.profile_image %}
+                    {{ msg.user.profile.profile_image.url }}
+                 {% else %}
+                    {% static 'core/default_icon.png' %}
+                 {% endif %}"
+            alt="icon"
+            style="
+                width:42px;
+                height:42px;
+                border-radius:50%;
+                object-fit:cover;
+                margin:0 8px;
+                border:1px solid #ddd;
+            "
+        >
+
+        <!-- ===== メッセージ本体 ===== -->
+        <div style="max-width:260px;">
+            <small style="color:gray;">
+                {{ msg.user.username }}
+            </small><br>
+
+            <span style="
+                display:inline-block;
+                padding:9px 13px;
+                border-radius:14px;
+                background:{% if msg.user == request.user %}#dcf8c6{% else %}#ffffff{% endif %};
+                box-shadow:0 1px 4px rgba(0,0,0,0.12);
+                word-break:break-word;
+                margin-top:2px;
+            ">
+                {{ msg.text }}
+            </span>
+        </div>
+
+    </div>
+    {% empty %}
+    <p style="color:gray; text-align:center;">
+        まだメッセージがありません
+    </p>
     {% endfor %}
+
 </div>
 
-<h3>メッセージを送る</h3>
-
-<form method="POST">
+<!-- =====================
+     送信フォーム
+     ===================== -->
+<form method="post" style="
+    display:flex;
+    gap:8px;
+    align-items:center;
+">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">送信</button>
+
+    {{ form.text }}
+
+    <button type="submit" style="
+        padding:8px 14px;
+        border-radius:10px;
+        border:none;
+        background:#4CAF50;
+        color:white;
+        font-weight:bold;
+        cursor:pointer;
+    ">
+        送信
+    </button>
 </form>
 
-<a href="{% url 'room_list' %}">← ルーム一覧に戻る</a>
+<div style="margin-top:16px; text-align:center;">
+    <a href="{% url 'room_list' %}" style="text-decoration:none; color:#555;">
+        ← ルーム一覧へ
+    </a>
+</div>
+
+{% endblock %}

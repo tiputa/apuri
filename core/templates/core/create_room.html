@@ -1,10 +1,74 @@
-<h1>ルーム作成</h1>
+{% extends "core/base.html" %}
+{% block content %}
 
-<form method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
+<div style="
+    max-width:500px;
+    margin:60px auto;
+    padding:30px;
+    border:1px solid #ddd;
+    border-radius:12px;
+    background:#fff;
+">
 
-    <button type="submit">作成</button>
-</form>
+    <h2 style="text-align:center; margin-bottom:25px;">
+        🏠 ルーム作成
+    </h2>
 
-<a href="{% url 'home' %}">戻る</a>
+    <form method="post">
+        {% csrf_token %}
+
+        <!-- ルーム名 -->
+        <div style="margin-bottom:20px;">
+            <label style="font-weight:bold;">ルーム名</label>
+            <input type="text" name="name" required style="
+                width:100%;
+                padding:10px;
+                margin-top:6px;
+                border-radius:8px;
+                border:1px solid #ccc;
+                font-size:15px;
+            ">
+        </div>
+
+        <!-- 説明 -->
+        <div style="margin-bottom:25px;">
+            <label style="font-weight:bold;">説明</label>
+            <textarea name="description" rows="4" style="
+                width:100%;
+                padding:10px;
+                margin-top:6px;
+                border-radius:8px;
+                border:1px solid #ccc;
+                font-size:15px;
+                resize:none;
+            "></textarea>
+        </div>
+
+        <!-- 作成ボタン -->
+        <button type="submit" style="
+            width:100%;
+            padding:12px;
+            background:#4CAF50;
+            color:white;
+            border:none;
+            border-radius:10px;
+            font-size:16px;
+            font-weight:bold;
+        ">
+            ルームを作成
+        </button>
+    </form>
+
+    <div style="text-align:center; margin-top:25px;">
+        <a href="{% url 'room_list' %}" style="
+            text-decoration:none;
+            color:#555;
+            font-weight:bold;
+        ">
+            ← ルーム一覧へ戻る
+        </a>
+    </div>
+
+</div>
+
+{% endblock %}

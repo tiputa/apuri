@@ -1,15 +1,103 @@
-<h1>公開ルーム一覧</h1>
+{% extends 'core/base.html' %}
 
+{% block content %}
+<h1 style="margin-bottom:15px;">ルーム一覧</h1>
+
+<!-- 上部アクションエリア -->
+<div style="
+    margin-bottom:20px;
+    display:flex;
+    gap:15px;
+    align-items:center;
+">
+
+    <!-- 新規ルーム作成 -->
+    <a href="{% url 'create_room' %}" style="
+       padding:10px 14px;
+       background:#4CAF50;
+       color:white;
+       text-decoration:none;
+       border-radius:8px;
+       font-weight:bold;
+    ">
+        ＋ 新しいルームを作る
+    </a>
+
+    <!-- 参加リクエスト管理（作成者のみ） -->
+    {% if has_requests %}
+    <a href="{% url 'request_list' %}" style="
+       padding:10px 14px;
+       background:#ff9800;
+       color:white;
+       text-decoration:none;
+       border-radius:8px;
+       font-weight:bold;
+    ">
+        🔔 参加リクエスト（{{ request_count }}）
+    </a>
+    {% endif %}
+</div>
+
+<!-- ルーム一覧 -->
+<ul style="list-style:none; padding:0;">
 {% for room in rooms %}
-    <div style="border:1px solid #ccc; margin-bottom:15px; padding:10px;">
-        <h2>{{ room.name }}</h2>
-        <p>{{ room.description }}</p>
-        <small>作成者：{{ room.host.username }}</small>
-        <br>
-        <a href="#">このルームに参加リクエストを送る</a>
-    </div>
-{% empty %}
-    <p>まだルームがありません。</p>
-{% endfor %}
+    <li style="
+        padding:14px 16px;
+        margin-bottom:12px;
+        border:1px solid #ddd;
+        border-radius:12px;
+        background:#fafafa;
+    ">
 
-<a href="{% url 'home' %}">ホームに戻る</a>
+        <!-- ルーム名 -->
+        <div style="font-size:16px; font-weight:bold; color:#333;">
+            🏠 {{ room.name }}
+        </div>
+
+        <!-- アクション -->
+        <div style="margin-top:8px;">
+
+            {% if room.host == request.user %}
+                <!-- 作成者 -->
+                <a href="{% url 'room_detail' room.id %}"
+                   style="color:#2196F3; text-decoration:none;">
+                    ▶ ルームに入る
+                </a>
+
+            {% elif room.id in approved_room_ids %}
+                <!-- 承認済み -->
+                <a href="{% url 'room_detail' room.id %}"
+                   style="color:#2196F3; text-decoration:none;">
+                    ▶ ルームに入る
+                </a>
+
+            {% elif room.id in requested_room_ids %}
+                <!-- 申請中 -->
+                <span style="color:gray;">
+                    ⏳ 承認待ち
+                </span>
+
+            {% else %}
+                <!-- 未申請 -->
+                <a href="{% url 'send_request' room.id %}"
+                   style="color:#4CAF50; text-decoration:none; font-weight:bold;">
+                    ➕ 参加リクエストを送る
+                </a>
+            {% endif %}
+
+        </div>
+    </li>
+{% empty %}
+    <li style="color:gray;">
+        まだルームがありません
+    </li>
+{% endfor %}
+</ul>
+
+<div style="margin-top:20px;">
+    <a href="{% url 'home' %}" style="text-decoration:none;">
+        ← ホームへ
+    </a>
+</div>
+
+{% endblock %}

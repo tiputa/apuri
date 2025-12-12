@@ -1,0 +1,70 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+
+<!-- 画面全体を中央寄せ -->
+<div style="
+    min-height:80vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+">
+
+    <!-- 中身コンテナ -->
+    <div style="
+        width:100%;
+        max-width:600px;
+    ">
+
+        <h1 style="margin-bottom:25px; text-align:center;">
+            👥 ユーザー一覧
+        </h1>
+
+        <ul style="list-style:none; padding:0;">
+
+            {% for user in users %}
+            <li style="
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+                padding:16px 18px;
+                margin-bottom:14px;
+                border:1px solid #ddd;
+                border-radius:14px;
+                background:#ffffff;
+                box-shadow:0 4px 10px rgba(0,0,0,0.08);
+            ">
+                <span style="font-size:16px; font-weight:bold;">
+                    👤 {{ user.username }}
+                </span>
+
+                <a href="{% url 'dm_chat' user.id %}" style="
+                    padding:9px 18px;
+                    background:#4CAF50;
+                    color:white;
+                    text-decoration:none;
+                    border-radius:999px;
+                    font-size:14px;
+                    font-weight:bold;
+                ">
+                    💬 DMする
+                </a>
+            </li>
+            {% empty %}
+            <li style="text-align:center; color:gray;">
+                ユーザーがいません
+            </li>
+            {% endfor %}
+
+        </ul>
+
+        <div style="margin-top:30px; text-align:center;">
+            <a href="{% url 'home' %}" style="text-decoration:none;">
+                ← ホームへ
+            </a>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

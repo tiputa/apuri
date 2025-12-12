@@ -1,0 +1,64 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}SNS{% endblock %}</title>
+
+    <link rel="stylesheet" href="{% static 'core/style.css' %}">
+</head>
+
+<body style="padding-bottom: 70px;"> <!-- 下のバーとかぶらないよう余白 -->
+
+    <main class="container">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- ===== 画面下固定ナビバー ===== -->
+    <div style="
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: #333;
+        color: white;
+        display: flex;
+        justify-content: space-around;
+        padding: 10px 0;
+        z-index: 9999;
+        font-size: 14px;
+    ">
+
+        <!-- ホーム -->
+        <a href="{% url 'home' %}" style="color:white; text-decoration:none;">🏠 ホーム</a>
+
+        <!-- ルーム一覧 -->
+        <a href="{% url 'room_list' %}" style="color:white; text-decoration:none;">🏢 ルーム</a>
+
+        <!-- ユーザー一覧 -->
+        <a href="{% url 'user_list' %}" style="color:white; text-decoration:none;">👥 ユーザー</a>
+
+        <!-- DM一覧 -->
+        <a href="{% url 'dm_list' %}" style="color:white; text-decoration:none;">💬 DM</a>
+
+        {% if user.is_authenticated %}
+        <a href="{% url 'profile' user.id %}" style="color:white; text-decoration:none;">
+            👤 プロフィール
+        </a>
+        {% endif %}
+
+        <!-- ログアウト（POST送信） -->
+        <form action="{% url 'logout' %}" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" style="color:white; background:none; border:none; font-size:14px;">
+                🚪 ログアウト
+            </button>
+        </form>
+
+    </div>
+
+</body>
+
+</html>

@@ -1,30 +1,46 @@
-<a href="{% url 'create_post' %}">新規投稿</a>
-<a href="{% url 'create_room' %}">＋ ルームを作成</a>
-<a href="{% url 'room_list' %}">公開ルーム一覧を見る</a>
-<a href="{% url 'request_list' %}">参加リクエストを見る（ホスト用）</a>
-<a href="{% url 'dm_list' %}">DMを見る</a>
+{% extends 'core/base.html' %}
 
-<h1>SNSトップページ</h1>
+{% block content %}
 
-{% for p in posts %}
-<div style="border:1px solid #aaa; padding:10px; margin-bottom:10px;">
-    <p>{{ p.text }}</p>
-    <small>{{ p.created_at }}</small>
+<!-- 新規投稿ボタン -->
+<div style="width: 90%; max-width: 800px; margin: 0 auto 20px; text-align: right;">
+    <a href="{% url 'create_post' %}" style="background: #0095f6; color: white; padding: 10px 15px; 
+              border-radius: 8px; text-decoration: none; font-size: 14px;">
+        ＋ 新規投稿
+    </a>
+</div>
+
+<h2>ホーム</h2>
+
+<!-- 投稿一覧 -->
+{% for post in posts %}
+<div style="border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 10px; position: relative;">
+
+    <!-- 右上サムネイル画像 -->
+    {% if post.image %}
+    <img src="{{ post.image.url }}" alt="" style="
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 8px;
+            position: absolute;
+            top: 15px;
+            right: 15px;
+         ">
+    {% endif %}
+
+    <!-- ユーザー名 -->
+    <p><strong>{{ post.user.username }}</strong></p>
+
+    <!-- テキスト -->
+    <p style="max-width: 70%;">{{ post.text }}</p>
+
+    <!-- 投稿日時 -->
+    <p style="color: gray; font-size: 12px;">{{ post.created_at|date:'Y/m/d H:i' }}</p>
+
 </div>
 {% empty %}
-<p>まだ投稿がありません。</p>
+<p>まだ投稿がありません</p>
 {% endfor %}
 
-
-{% if user.is_authenticated %}
-    <p>{{ user.username }} でログイン中</p>
-
-    <form action="{% url 'logout' %}" method="post">
-        {% csrf_token %}
-        <button type="submit">ログアウト</button>
-    </form>
-
-{% else %}
-    <a href="{% url 'login' %}">ログイン</a>
-    <a href="{% url 'signup' %}">新規登録</a>
-{% endif %}
+{% endblock %}

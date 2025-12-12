@@ -1,20 +1,178 @@
-<h1>{{ other_user.username }} さんとのDM</h1>
+{% extends 'core/base.html' %}
+{% load static %}
+{% block content %}
 
-<div style="max-height:400px; overflow-y:scroll; border:1px solid #ccc; padding:10px;">
-    {% for m in messages %}
-        <p>
-            <strong>{{ m.sender.username }}</strong>: {{ m.text }}<br>
-            <small>{{ m.created_at }}</small>
-        </p>
-        <hr>
-    {% endfor %}
+<style>
+/* 全体のチャットエリア */
+.chat-wrapper {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    padding-bottom: 80px;
+}
+
+/* メッセージ一覧 */
+.chat-box {
+    padding: 10px;
+    margin-top: 10px;
+}
+
+/* 行（アイコン＋吹き出し） */
+.chat-row {
+    display: flex;
+    align-items: flex-end;
+    margin: 10px 0;
+}
+
+/* 自分の行 */
+.chat-row.me {
+    justify-content: flex-end;
+}
+
+/* 相手の行 */
+.chat-row.other {
+    justify-content: flex-start;
+}
+
+/* アイコン */
+.chat-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #ccc;
+}
+
+/* 吹き出し */
+.bubble {
+    max-width: 70%;
+    padding: 10px 15px;
+    border-radius: 15px;
+    font-size: 15px;
+    margin: 0 8px;
+}
+
+/* 自分のメッセージ */
+.bubble.me {
+    background: #aee2ff;
+    border-bottom-right-radius: 0;
+    text-align: right;
+}
+
+/* 相手のメッセージ */
+.bubble.other {
+    background: #e5e5ea;
+    border-bottom-left-radius: 0;
+}
+
+/* 🔽 戻るボタン付きタイトル */
+.dm-header {
+    display: flex;
+    align-items: center;
+    margin: 10px auto 0;
+    max-width: 600px;
+    padding: 5px 10px;
+}
+.dm-header a {
+    font-size: 22px;
+    text-decoration: none;
+    margin-right: 10px;
+}
+
+/* 送信フォーム（下固定） */
+.chat-input-area {
+    position: fixed;
+    bottom: 55px;
+    left: 0;
+    width: 100%;
+    background: white;
+    padding: 8px;
+    border-top: 1px solid #ccc;
+}
+
+.chat-input-area form {
+    display: flex;
+    width: 100%;
+    gap: 8px;
+}
+
+.chat-input-area input[type="text"] {
+    flex: 1;
+    padding: 8px 10px;
+    font-size: 15px;
+    border: 1px solid #aaa;
+    border-radius: 10px;
+}
+
+.chat-input-area button {
+    padding: 8px 12px;
+    background: #0095f6;
+    color: white;
+    border: none;
+    border-radius: 10px;
+}
+</style>
+
+<!-- 🔙 戻るボタン＋タイトル -->
+<div class="dm-header">
+    <a href="{% url 'dm_list' %}">←</a>
+    <h2 style="margin: 0;">{{ other_user.username }} とDM</h2>
 </div>
 
-<h3>メッセージを送る</h3>
-<form method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">送信</button>
-</form>
+<div class="chat-wrapper">
+    <div class="chat-box">
 
-<a href="{% url 'dm_list' %}">← DM一覧に戻る</a>
+        {% for msg in messages %}
+            {% if msg.sender == request.user %}
+            <!-- 自分 -->
+            <div class="chat-row me">
+                <div class="bubble me">
+                    {{ msg.text }}<br>
+                    <small style="font-size:10px; color:#555;">
+                        {{ msg.created_at|date:"H:i" }}
+                    </small>
+                </div>
+                <img
+                    src="{% if msg.sender.profile.profile_image %}
+                            {{ msg.sender.profile.profile_image.url }}
+                         {% else %}
+                            {% static 'core/default_icon.png' %}
+                         {% endif %}"
+                    class="chat-icon"
+                >
+            </div>
+
+            {% else %}
+            <!-- 相手 -->
+            <div class="chat-row other">
+                <img
+                    src="{% if msg.sender.profile.profile_image %}
+                            {{ msg.sender.profile.profile_image.url }}
+                         {% else %}
+                            {% static 'core/default_icon.png' %}
+                         {% endif %}"
+                    class="chat-icon"
+                >
+                <div class="bubble other">
+                    {{ msg.text }}<br>
+                    <small style="font-size:10px; color:#555;">
+                        {{ msg.created_at|date:"H:i" }}
+                    </small>
+                </div>
+            </div>
+            {% endif %}
+        {% endfor %}
+
+    </div>
+</div>
+
+<!-- 送信フォーム -->
+<div class="chat-input-area">
+    <form method="POST">
+        {% csrf_token %}
+        <input type="text" name="text" placeholder="メッセージを入力…" required>
+        <button type="submit">送信</button>
+    </form>
+</div>
+
+{% endblock %}

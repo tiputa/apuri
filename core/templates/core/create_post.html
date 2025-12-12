@@ -1,7 +1,26 @@
-<h1>新規投稿</h1>
+{% extends 'core/base.html' %}
 
-<form method="POST">
+{% block content %}
+<h2>新規投稿</h2>
+
+{% if error %}
+<p style="color:red">{{ error }}</p>
+{% endif %}
+
+<form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
-    <textarea name="text" rows="5" style="width:100%;"></textarea>
-    <button type="submit">投稿</button>
+
+    <!-- テキスト部分 -->
+    <textarea name="text" rows="5" placeholder="投稿内容を入力してください"></textarea>
+    <br><br>
+
+    <!-- 写真投稿部分（復活！）-->
+    <label>写真を追加：</label>
+    <input type="file" name="image">
+    <br><br>
+
+    <button type="submit">投稿する</button>
 </form>
+
+<a href="{% url 'home' %}">ホームに戻る</a>
+{% endblock %}

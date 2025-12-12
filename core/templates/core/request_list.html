@@ -1,12 +1,68 @@
-<h1>参加リクエスト一覧</h1>
+{% extends 'core/base.html' %}
 
-{% for r in requests %}
-    <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
-        <p>ユーザー：{{ r.user.username }}</p>
-        <p>ルーム：{{ r.room.name }}</p>
+{% block content %}
+<h1 style="margin-bottom:20px;">参加リクエスト一覧</h1>
 
-        <a href="{% url 'approve_request' r.id %}">承認する</a>
-    </div>
+<ul style="list-style:none; padding:0;">
+
+{% for req in requests %}
+    <li style="
+        padding:16px;
+        margin-bottom:14px;
+        border:1px solid #ddd;
+        border-radius:12px;
+        background:#fff;
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+    ">
+
+        <!-- 左側：情報 -->
+        <div>
+            <div style="font-size:16px; font-weight:bold;">
+                👤 {{ req.user.username }}
+            </div>
+            <div style="font-size:14px; color:#555; margin-top:4px;">
+                🏠 ルーム：{{ req.room.name }}
+            </div>
+            <div style="font-size:12px; color:gray; margin-top:4px;">
+                📅 {{ req.created_at|date:"Y/m/d H:i" }}
+            </div>
+        </div>
+
+        <!-- 右側：承認ボタン -->
+        <div>
+            <a href="{% url 'approve_request' req.id %}"
+               style="
+               padding:8px 14px;
+               background:#4CAF50;
+               color:white;
+               text-decoration:none;
+               border-radius:20px;
+               font-weight:bold;
+               ">
+                ✔ 承認
+            </a>
+        </div>
+
+    </li>
+
 {% empty %}
-    <p>承認待ちのリクエストはありません。</p>
+    <li style="
+        color:gray;
+        padding:20px;
+        text-align:center;
+    ">
+        現在、参加リクエストはありません
+    </li>
 {% endfor %}
+
+</ul>
+
+<div style="margin-top:20px;">
+    <a href="{% url 'room_list' %}" style="text-decoration:none;">
+        ← ルーム一覧へ戻る
+    </a>
+</div>
+
+{% endblock %}

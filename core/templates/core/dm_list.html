@@ -1,11 +1,81 @@
-<h1>DM一覧</h1>
+{% extends 'core/base.html' %}
 
-{% for u in users %}
-    <div style="margin-bottom:10px;">
-        <a href="{% url 'dm_chat' u.id %}">{{ u.username }}</a>
+{% block content %}
+<div style="
+    max-width:600px;
+    margin:40px auto;
+">
+
+    <h2 style="
+        text-align:center;
+        margin-bottom:25px;
+        font-size:26px;
+    ">
+        💬 DMリスト
+    </h2>
+
+    <ul style="
+        list-style:none;
+        padding:0;
+        display:flex;
+        flex-direction:column;
+        gap:15px;
+    ">
+        {% for user in users %}
+        <li style="
+            background:#fff;
+            border-radius:14px;
+            padding:16px 20px;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            box-shadow:0 4px 12px rgba(0,0,0,0.08);
+        ">
+            <!-- ユーザー名 -->
+            <div style="
+                display:flex;
+                align-items:center;
+                gap:10px;
+                font-size:18px;
+                font-weight:bold;
+            ">
+                👤 {{ user.username }}
+            </div>
+
+            <!-- チャットボタン -->
+            <a href="{% url 'dm_chat' user.id %}" style="
+                background:#4CAF50;
+                color:white;
+                padding:8px 14px;
+                border-radius:20px;
+                text-decoration:none;
+                font-size:14px;
+                font-weight:bold;
+            ">
+                💬 チャット
+            </a>
+        </li>
+        {% empty %}
+        <li style="
+            text-align:center;
+            color:gray;
+            padding:30px;
+            font-size:16px;
+        ">
+            まだDMはありません
+        </li>
+        {% endfor %}
+    </ul>
+
+    <div style="margin-top:25px; text-align:center;">
+        <a href="{% url 'home' %}" style="
+            text-decoration:none;
+            color:#555;
+            font-size:14px;
+        ">
+            ← ホームへ戻る
+        </a>
     </div>
-{% empty %}
-    <p>まだDMはありません。</p>
-{% endfor %}
 
-<a href="{% url 'home' %}">ホームに戻る</a>
+</div>
+{% endblock %}

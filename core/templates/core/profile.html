@@ -1,0 +1,65 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block title %}プロフィール{% endblock %}
+
+{% block content %}
+<div style="
+    min-height:70vh;
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+">
+
+    <div style="
+        width:100%;
+        max-width:420px;
+        text-align:center;
+        margin-top:40px;
+        padding:30px 20px;
+        background:#ffffff;
+        border-radius:16px;
+        box-shadow:0 4px 12px rgba(0,0,0,0.08);
+    ">
+
+        <h1 style="margin-bottom:20px;">
+            {{ profile.user.username }} のプロフィール
+        </h1>
+
+        {% if profile.profile_image %}
+            <img src="{{ profile.profile_image.url }}"
+                 style="
+                 width:120px;
+                 height:120px;
+                 border-radius:50%;
+                 object-fit:cover;
+                 margin-bottom:15px;
+                 ">
+        {% endif %}
+
+        <p style="
+            font-size:16px;
+            margin-bottom:25px;
+            color:#333;
+        ">
+            {{ profile.bio|default:"自己紹介はまだありません" }}
+        </p>
+
+        {% if request.user == profile.user %}
+        <a href="{% url 'edit_profile' profile.user.id %}"
+           style="
+           display:inline-block;
+           padding:10px 16px;
+           background:#f3f3f3;
+           border-radius:10px;
+           text-decoration:none;
+           color:#333;
+           font-size:14px;
+           font-weight:bold;
+           ">
+            ✏️ プロフィール編集
+        </a>
+        {% endif %}
+
+    </div>
+</div>
+{% endblock %}
