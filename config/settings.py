@@ -116,6 +116,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / "media"
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 LOGIN_REDIRECT_URL = '/home'
@@ -138,3 +139,8 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATICFILES_DIRS = []
+
+
+LANGUAGE_CODE = 'ja'
+TIME_ZONE = 'Asia/Tokyo'
+USE_L10N = True

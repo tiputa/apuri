@@ -1,26 +1,107 @@
 {% extends 'core/base.html' %}
 
 {% block content %}
-<h2>新規投稿</h2>
 
-{% if error %}
-<p style="color:red">{{ error }}</p>
-{% endif %}
+<div style="
+    max-width:520px;
+    margin:60px auto;
+    padding:30px;
+    border:1px solid #ddd;
+    border-radius:16px;
+    background:#fff;
+    box-shadow:0 4px 12px rgba(0,0,0,0.08);
+">
 
-<form method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
+    <h2 style="
+        text-align:center;
+        margin-bottom:25px;
+        font-size:22px;
+        font-weight:bold;
+    ">
+        ✏️ 新規投稿
+    </h2>
 
-    <!-- テキスト部分 -->
-    <textarea name="text" rows="5" placeholder="投稿内容を入力してください"></textarea>
-    <br><br>
+    {% if error %}
+    <p style="
+        color:#e53935;
+        background:#fdecea;
+        padding:10px;
+        border-radius:8px;
+        margin-bottom:20px;
+        text-align:center;
+        font-size:14px;
+    ">
+        {{ error }}
+    </p>
+    {% endif %}
 
-    <!-- 写真投稿部分（復活！）-->
-    <label>写真を追加：</label>
-    <input type="file" name="image">
-    <br><br>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
 
-    <button type="submit">投稿する</button>
-</form>
+        <!-- テキスト投稿 -->
+        <textarea
+            name="text"
+            rows="5"
+            placeholder="今なにしてる？"
+            style="
+                width:100%;
+                padding:12px;
+                font-size:15px;
+                border-radius:12px;
+                border:1px solid #ccc;
+                resize:none;
+                margin-bottom:20px;
+            "
+        ></textarea>
 
-<a href="{% url 'home' %}">ホームに戻る</a>
+        <!-- 画像アップロード -->
+        <label style="
+            display:block;
+            margin-bottom:8px;
+            font-size:14px;
+            font-weight:bold;
+            color:#555;
+        ">
+            📷 写真を追加
+        </label>
+
+        <input
+            type="file"
+            name="image"
+            style="
+                margin-bottom:25px;
+                font-size:14px;
+            "
+        >
+
+        <!-- 投稿ボタン -->
+        <button type="submit" style="
+            width:100%;
+            padding:12px;
+            background:#0095f6;
+            color:white;
+            border:none;
+            border-radius:12px;
+            font-size:16px;
+            font-weight:bold;
+            cursor:pointer;
+        ">
+            投稿する
+        </button>
+    </form>
+
+    <!-- 戻る -->
+    <div style="text-align:center; margin-top:25px;">
+        <a href="{% url 'home' %}" style="
+            text-decoration:none;
+            color:#555;
+            font-size:14px;
+            font-weight:bold;
+        ">
+            ← ホームに戻る
+        </a>
+    </div>
+
+</div>
+
 {% endblock %}

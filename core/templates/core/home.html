@@ -2,45 +2,132 @@
 
 {% block content %}
 
+<style>
+/* =========================
+   📱 スマホ最適化（完成版）
+========================= */
+@media (max-width: 600px) {
+
+    /* 見出し */
+    h2 {
+        font-size: 24px !important;
+    }
+
+    /* 新規投稿ボタン */
+    .new-post-btn {
+        width: 100%;
+        display: block;
+        text-align: center;
+        font-size: 17px;
+        padding: 14px;
+        border-radius: 10px;
+    }
+
+    /* 投稿カード */
+    .post-card {
+        padding: 18px !important;
+        border-radius: 14px;
+    }
+
+    /* ユーザー名 */
+    .post-username {
+        font-size: 18px;
+    }
+
+    /* 本文 */
+    .post-text {
+        max-width: 100% !important;
+        font-size: 17px;
+        line-height: 1.6;
+    }
+
+    /* 画像はカード内で大きく表示 */
+    .post-image {
+        position: static !important;
+        width: 100% !important;
+        height: auto !important;
+        margin-top: 14px;
+        border-radius: 12px;
+    }
+
+    /* 時刻 */
+    .post-time {
+        font-size: 13px;
+    }
+}
+</style>
+
 <!-- 新規投稿ボタン -->
-<div style="width: 90%; max-width: 800px; margin: 0 auto 20px; text-align: right;">
-    <a href="{% url 'create_post' %}" style="background: #0095f6; color: white; padding: 10px 15px; 
-              border-radius: 8px; text-decoration: none; font-size: 14px;">
+<div style="
+    width: 90%;
+    max-width: 800px;
+    margin: 0 auto 20px;
+    text-align: right;
+">
+    <a href="{% url 'create_post' %}" class="new-post-btn" style="
+        background:#0095f6;
+        color:white;
+        padding:10px 15px;
+        border-radius:8px;
+        text-decoration:none;
+        font-size:14px;
+        font-weight:bold;
+    ">
         ＋ 新規投稿
     </a>
 </div>
 
-<h2>ホーム</h2>
+<h2 style="width:90%; max-width:800px; margin:0 auto 15px;">
+    🏠 ホーム
+</h2>
 
 <!-- 投稿一覧 -->
-{% for post in posts %}
-<div style="border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 10px; position: relative;">
+<div style="width:90%; max-width:800px; margin:0 auto;">
+    {% for post in posts %}
+    <div class="post-card" style="
+        border:1px solid #ddd;
+        padding:15px;
+        margin-bottom:16px;
+        border-radius:12px;
+        position:relative;
+        background:#fff;
+        box-shadow:0 2px 8px rgba(0,0,0,0.05);
+    ">
 
-    <!-- 右上サムネイル画像 -->
-    {% if post.image %}
-    <img src="{{ post.image.url }}" alt="" style="
-            width: 120px;
-            height: 120px;
-            object-fit: cover;
-            border-radius: 8px;
-            position: absolute;
-            top: 15px;
-            right: 15px;
-         ">
-    {% endif %}
+        <!-- ユーザー名 -->
+        <p class="post-username" style="font-weight:bold; margin-bottom:6px;">
+            {{ post.user.username }}
+        </p>
 
-    <!-- ユーザー名 -->
-    <p><strong>{{ post.user.username }}</strong></p>
+        <!-- 本文 -->
+        <p class="post-text" style="max-width:70%; margin-bottom:8px;">
+            {{ post.text }}
+        </p>
 
-    <!-- テキスト -->
-    <p style="max-width: 70%;">{{ post.text }}</p>
+        <!-- 画像 -->
+        {% if post.image %}
+        <img src="{{ post.image.url }}" alt="" class="post-image" style="
+            width:120px;
+            height:120px;
+            object-fit:cover;
+            border-radius:10px;
+            position:absolute;
+            top:15px;
+            right:15px;
+        ">
+        {% endif %}
 
-    <!-- 投稿日時 -->
-    <p style="color: gray; font-size: 12px;">{{ post.created_at|date:'Y/m/d H:i' }}</p>
+        <!-- 時刻 -->
+        <p class="post-time" style="color:gray; font-size:12px;">
+            {{ post.created_at|timesince }}前
+        </p>
 
+    </div>
+    {% empty %}
+    <p style="text-align:center; color:gray;">
+        まだ投稿がありません
+    </p>
+    {% endfor %}
 </div>
-{% empty %}
-<p>まだ投稿がありません</p>
-{% endfor %}
 
 {% endblock %}

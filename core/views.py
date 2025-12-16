@@ -10,7 +10,9 @@ from .forms import (
     ProfileForm,
 )
 from django.utils import timezone
-from datetime import timedelta
+from datetime import datetime, timedelta
+from django.db.models import Max, Q, DateTimeField, Value
+from django.db.models.functions import Greatest, Coalesce
 
 
 # =====================
@@ -19,11 +21,18 @@ from datetime import timedelta
 def home(request):
     limit = timezone.now() - timedelta(hours=24)
 
-    # 24時間以上前の投稿を削除
-    Post.objects.filter(created_at__lt=limit).delete()
+    # 24時間以内の投稿だけ表示
+    posts = Post.objects.filter(
+        created_at__gte=limit
+    ).select_related("user").order_by("-created_at")
 
-    posts = Post.objects.filter(created_at__gte=limit).order_by("-created_at")
-    return render(request, "core/home.html", {"posts": posts})
+    return render(
+        request,
+        "core/home.html",
+        {
+            "posts": posts,
+        }
+    )
 
 
 # =====================
@@ -75,7 +84,8 @@ def room_list(request):
 
     # 自分が申請したルームID一覧
     requested_room_ids = RoomRequest.objects.filter(user=request.user).values_list(
-        "room_id", flat=True
+        "room_id",
+        flat=True,
     )
 
     # 自分が承認済みのルームID一覧
@@ -197,26 +207,26 @@ def room_detail(request, room_id):
 # ==============================
 @login_required
 def dm_list(request):
-    # 自分が送ったDMの相手
-    sent_user_ids = DirectMessage.objects.filter(sender=request.user).values_list(
-        "receiver", flat=True
+    me = request.user
+
+    users = (
+        User.objects.filter(Q(dm_sender__receiver=me) | Q(dm_receiver__sender=me))
+        .exclude(id=me.id)
+        .annotate(
+            last_sent_at=Max("dm_sender__created_at", filter=Q(dm_sender__receiver=me)),
+            last_received_at=Max(
+                "dm_receiver__created_at", filter=Q(dm_receiver__sender=me)
+            ),
+        )
+        .annotate(last_dm_at=Greatest("last_sent_at", "last_received_at"))
+        .order_by("-last_dm_at")
+        .distinct()
     )
-
-    # 自分が受け取ったDMの相手
-    received_user_ids = DirectMessage.objects.filter(receiver=request.user).values_list(
-        "sender", flat=True
-    )
-
-    # 両方を合成（重複なし）
-    user_ids = set(sent_user_ids) | set(received_user_ids)
-
-    # ユーザー一覧
-    users = User.objects.filter(id__in=user_ids).distinct()
 
     return render(
         request,
         "core/dm_list.html",
-        {"users": users},  # ← ここが重要
+        {"users": users},
     )
 
 

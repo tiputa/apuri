@@ -1,6 +1,7 @@
 {% extends 'core/base.html' %}
-
+{% load static %}
 {% block content %}
+
 <div style="
     max-width:600px;
     margin:40px auto;
@@ -31,15 +32,30 @@
             justify-content:space-between;
             box-shadow:0 4px 12px rgba(0,0,0,0.08);
         ">
-            <!-- ユーザー名 -->
+
+            <!-- 左側（アイコン＋名前） -->
             <div style="
                 display:flex;
                 align-items:center;
-                gap:10px;
+                gap:12px;
                 font-size:18px;
                 font-weight:bold;
             ">
-                👤 {{ user.username }}
+                <!-- アイコン -->
+                <img src="
+                    {% if user.profile.profile_image %}
+                        {{ user.profile.profile_image.url }}
+                    {% else %}
+                        {% static 'core/default_icon.png' %}
+                    {% endif %}
+                " style="
+                    width:42px;
+                    height:42px;
+                    border-radius:50%;
+                    object-fit:cover;
+                ">
+
+                {{ user.username }}
             </div>
 
             <!-- チャットボタン -->
